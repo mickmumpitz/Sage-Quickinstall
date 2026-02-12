@@ -90,10 +90,11 @@ echo   CUDA:     !CUDA_VER!
 echo.
 
 REM ── Step 3: List available wheels ──
+:select_wheel
 echo Step 3: Select wheel
 
 set "WHL_COUNT=0"
-for %%F in ("%SCRIPT_DIR%sageattention*.whl") do (
+for %%F in ("%SCRIPT_DIR%assets\wheels\sageattention*.whl") do (
     set /a WHL_COUNT+=1
     set "WHL_!WHL_COUNT!=%%F"
     set "WHL_NAME_!WHL_COUNT!=%%~nxF"
@@ -101,7 +102,7 @@ for %%F in ("%SCRIPT_DIR%sageattention*.whl") do (
 
 if %WHL_COUNT% EQU 0 (
     echo.
-    echo   ERROR: No sageattention .whl files found in %SCRIPT_DIR%
+    echo   ERROR: No sageattention .whl files found in %SCRIPT_DIR%assets\wheels\
     echo.
     pause
     exit /b 1
@@ -153,7 +154,7 @@ echo   Installing triton-windows...
 echo.
 
 REM Copy include/libs
-set "SOURCE=%SCRIPT_DIR%python_3.13.2_include_libs"
+set "SOURCE=%SCRIPT_DIR%assets\python_3.13.2_include_libs"
 if exist "!SOURCE!" (
     echo   Copying include/libs...
     robocopy "!SOURCE!" "!PYTHON_DIR!" /E /MT:8 >nul
@@ -169,13 +170,14 @@ REM Install sageattention wheel
 echo   Installing sageattention...
 "!PYTHON_DIR!\python.exe" -m pip install "!SELECTED_WHL!"
 
-if %ERRORLEVEL% EQU 0 (
+if !ERRORLEVEL! EQU 0 (
     echo.
     echo   Done! SageAttention installed successfully.
+    echo.
+    pause
 ) else (
     echo.
-    echo   Error occurred during installation.
+    echo   Installation failed. Please select a different wheel.
+    echo.
+    goto select_wheel
 )
-
-echo.
-pause
