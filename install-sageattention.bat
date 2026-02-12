@@ -41,10 +41,13 @@ REM ── Detect python_embeded directory ──
 echo.
 echo   Checking for Python...
 set "PYTHON_DIR="
+set "PYTHON_FOLDER="
 if exist "!COMFYUI_DIR!\python_embeded" (
     set "PYTHON_DIR=!COMFYUI_DIR!\python_embeded"
+    set "PYTHON_FOLDER=python_embeded"
 ) else if exist "!COMFYUI_DIR!\python_embedded" (
     set "PYTHON_DIR=!COMFYUI_DIR!\python_embedded"
+    set "PYTHON_FOLDER=python_embedded"
 )
 
 if not defined PYTHON_DIR (
@@ -170,14 +173,51 @@ REM Install sageattention wheel
 echo   Installing sageattention...
 "!PYTHON_DIR!\python.exe" -m pip install "!SELECTED_WHL!"
 
-if !ERRORLEVEL! EQU 0 (
-    echo.
-    echo   Done! SageAttention installed successfully.
-    echo.
-    pause
-) else (
+if !ERRORLEVEL! NEQ 0 (
     echo.
     echo   Installation failed. Please select a different wheel.
     echo.
     goto select_wheel
 )
+
+echo.
+echo   SageAttention installed successfully.
+echo.
+
+REM ── Step 5: Create run_nvidia_gpu_sage.bat ──
+echo Step 5: Create launcher
+
+set "EXTRA_FLAGS="
+echo.
+echo   Expose ComfyUI to your local network?
+echo   (Adds --listen --port=8188)
+echo   [1] Yes
+echo   [2] No
+echo.
+
+:prompt_network
+set "NET_CHOICE="
+set /p "NET_CHOICE=  Choose [1-2]: "
+
+if "!NET_CHOICE!"=="1" (
+    set "EXTRA_FLAGS= --listen --port=8188"
+) else if "!NET_CHOICE!"=="2" (
+    set "EXTRA_FLAGS="
+) else (
+    goto prompt_network
+)
+
+set "LAUNCHER=!COMFYUI_DIR!\run_nvidia_gpu_sage.bat"
+
+(
+    echo .\!PYTHON_FOLDER!\python.exe -s ComfyUI\main.py --windows-standalone-build --use-sage-attention!EXTRA_FLAGS!
+    echo echo If you see this and ComfyUI did not start try updating your Nvidia Drivers to the latest. If you get a c10.dll error you need to install vc redist that you can find: https://aka.ms/vc14/vc_redist.x64.exe
+    echo pause
+) > "!LAUNCHER!"
+
+echo.
+echo   Created: !LAUNCHER!
+echo.
+echo   Done!
+echo.
+pause
