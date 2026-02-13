@@ -247,8 +247,54 @@ echo.
 echo   SageAttention installed successfully.
 echo.
 
-REM ── Step 5: Create run_nvidia_gpu_sage.bat ──
-echo Step 5: Create launcher
+REM ── Step 5: ComfyUI-Manager (optional) ──
+if exist "!COMFYUI_DIR!\ComfyUI\custom_nodes\comfyui-manager" (
+    echo Step 5: ComfyUI-Manager already installed, skipping.
+    echo.
+    goto after_manager
+)
+
+echo Step 5: Install ComfyUI-Manager?
+echo   ComfyUI-Manager lets you install/update custom nodes from the UI.
+echo   [1] Yes
+echo   [2] No
+echo.
+
+:prompt_manager
+set "MGR_CHOICE="
+set /p "MGR_CHOICE=  Choose [1-2]: "
+
+if "!MGR_CHOICE!"=="2" (
+    echo.
+    echo   Skipping ComfyUI-Manager.
+    echo.
+    goto after_manager
+)
+
+if not "!MGR_CHOICE!"=="1" goto prompt_manager
+
+echo.
+echo   Installing gitpython...
+"!PYTHON_DIR!\python.exe" -s -m pip install gitpython
+echo.
+echo   Cloning ComfyUI-Manager...
+"!PYTHON_DIR!\python.exe" -c "import git; git.Repo.clone_from('https://github.com/ltdrdata/ComfyUI-Manager', r'!COMFYUI_DIR!\ComfyUI\custom_nodes\comfyui-manager')"
+if !ERRORLEVEL! NEQ 0 (
+    echo   WARNING: Failed to clone ComfyUI-Manager. Skipping.
+    echo.
+    goto after_manager
+)
+echo.
+echo   Installing ComfyUI-Manager requirements...
+"!PYTHON_DIR!\python.exe" -s -m pip install -r "!COMFYUI_DIR!\ComfyUI\custom_nodes\comfyui-manager\requirements.txt"
+echo.
+echo   ComfyUI-Manager installed successfully.
+echo.
+
+:after_manager
+
+REM ── Step 6: Create run_nvidia_gpu_sage.bat ──
+echo Step 6: Create launcher
 
 set "EXTRA_FLAGS="
 echo.
