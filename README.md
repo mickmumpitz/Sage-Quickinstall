@@ -37,7 +37,7 @@ GTX 16xx / RTX 20xx (Turing) support was dropped in triton-windows 3.3+ (PyTorch
 
 ## How to Use
 
-1. Download the [latest version](github.com/mickmumpitz/Sage-Quickinstall/releases/latest/download/sage-quickinstall.zip) or clone this repository
+1. Download the [latest version](https://github.com/mickmumpitz/Sage-Quickinstall/releases/latest/download/sage-quickinstall.zip) or clone this repository
 2. Double-click `install-sage-only.bat` or `install-comfyui-setup.bat`
 3. Enter the path to your ComfyUI portable folder (e.g. `D:\ComfyUI_windows_portable`)
 4. The installer auto-detects your environment and installs everything
