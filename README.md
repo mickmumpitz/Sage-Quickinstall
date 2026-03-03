@@ -11,6 +11,13 @@ Automatically detects your Python, PyTorch, and CUDA versions, selects the corre
 | `install-sage-only.bat` | Installs SageAttention + Triton and creates a launcher |
 | `install-comfyui-setup.bat` | Same as above, plus optionally installs [ComfyUI-Manager](https://github.com/ltdrdata/ComfyUI-Manager) and network access (`--listen`) |
 
+## Prerequisites
+
+Install these before running the installer:
+
+- [Visual C++ Redistributable](https://aka.ms/vs/17/release/vc_redist.x64.exe)
+- [Git](https://git-scm.com/downloads) (only needed for ComfyUI-Manager in `install-comfyui-setup.bat`)
+
 ## Requirements
 
 - Windows 10/11

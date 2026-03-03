@@ -357,7 +357,7 @@ echo Step 6: Create launcher
 
 set "EXTRA_FLAGS="
 echo.
-echo   Expose ComfyUI to your local network?
+echo   Allow access to ComfyUI from other devices on your network?
 echo   (Adds --listen --port=8188)
 echo   [1] Yes
 echo   [2] No
