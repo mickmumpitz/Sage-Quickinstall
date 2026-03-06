@@ -1,4 +1,4 @@
-# Sage-Quickinstall
+# ComfyUI-Sage-EasyInstall
 
 One-click installers for [SageAttention](https://github.com/woct0rdho/SageAttention) on Windows with ComfyUI portable.
 
