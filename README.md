@@ -1,6 +1,8 @@
 # ComfyUI-Sage-EasyInstall
 
-One-click installers for [SageAttention](https://github.com/woct0rdho/SageAttention) on Windows with ComfyUI portable.
+Automated installers for [SageAttention](https://github.com/woct0rdho/SageAttention) on Windows for [ComfyUI portable](https://github.com/Comfy-Org/ComfyUI/releases/latest).
+
+SageAttention accelerates AI video generation significantly. If you're using models like WAN in ComfyUI, SageAttention can make your renders up to twice as fast — but installing it on Windows has always been a pain. This installer handles everything automatically so you can get the speed boost without the headache.
 
 Automatically detects your Python, PyTorch, and CUDA versions, selects the correct wheel, installs [triton-windows](https://github.com/triton-lang/triton-windows), and creates a ready-to-use launcher.
 
@@ -37,7 +39,7 @@ GTX 16xx / RTX 20xx (Turing) support was dropped in triton-windows 3.3+ (PyTorch
 
 ## How to Use
 
-1. Download the [latest version](https://github.com/mickmumpitz/Sage-Quickinstall/releases/latest/download/sage-quickinstall.zip) or clone this repository
+1. Download the [latest version](https://github.com/mickmumpitz/ComfyUI-Sage-EasyInstall/releases/latest/download/ComfyUI-Sage-EasyInstall.zip) or clone this repository
 2. Double-click `install-sage-only.bat` or `install-comfyui-setup.bat`
 3. Enter the path to your ComfyUI portable folder (e.g. `D:\ComfyUI_windows_portable`)
 4. The installer auto-detects your environment and installs everything
