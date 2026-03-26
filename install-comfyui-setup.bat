@@ -130,9 +130,17 @@ if !TORCH_MINOR! GEQ 9 set "USE_ANDHIGHER=1"
 REM CUDA minor version doesn't matter for SageAttention, only major (12 vs 13)
 REM So cu128 works for cu124/cu126/cu128 etc., cu130 works for cu130/cu131 etc.
 if "!USE_ANDHIGHER!"=="1" (
-    for %%F in ("%SCRIPT_DIR%assets\wheels\sageattention*+cu!CUDA_MAJOR!*torch2.9.0andhigher*-win_amd64.whl") do (
+    REM First try exact torch version match (version-specific wheels like torch 2.11)
+    for %%F in ("%SCRIPT_DIR%assets\wheels\sageattention*+cu!CUDA_MAJOR!*torch!TORCH_MAJOR!.!TORCH_MINOR!.*-win_amd64.whl") do (
         set "SELECTED_WHL=%%F"
         set "SELECTED_NAME=%%~nxF"
+    )
+    REM Fall back to "andhigher" wheel if no exact match found
+    if not defined SELECTED_WHL (
+        for %%F in ("%SCRIPT_DIR%assets\wheels\sageattention*+cu!CUDA_MAJOR!*torch2.9.0andhigher*-win_amd64.whl") do (
+            set "SELECTED_WHL=%%F"
+            set "SELECTED_NAME=%%~nxF"
+        )
     )
 ) else (
     REM Try matching CUDA major + exact torch version
@@ -254,6 +262,9 @@ if "!TORCH_MINOR!"=="4" (
 ) else if "!TORCH_MINOR!"=="10" (
     set "TRITON_SPEC=triton-windows>=3.6,<3.7"
     set "TRITON_LABEL=3.6.x"
+) else if "!TORCH_MINOR!"=="11" (
+    set "TRITON_SPEC=triton-windows>=3.7,<3.8"
+    set "TRITON_LABEL=3.7.x"
 )
 
 if not defined TRITON_SPEC (
