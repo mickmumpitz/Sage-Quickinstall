@@ -320,6 +320,42 @@ echo.
 echo   SageAttention installed successfully.
 echo.
 
+REM ── Optional: fp16 black-frame fix (Blackwell / WAN fp8) ──
+echo Optional: fp16 black-frame fix
+echo   Fixes all-black WAN renders with SageAttention on RTX 50xx (fp8 models).
+echo   [1] Yes (recommended)
+echo   [2] No
+echo.
+
+:prompt_fp16fix
+set "FIX_CHOICE="
+set /p "FIX_CHOICE=  Choose [1-2]: "
+
+if "!FIX_CHOICE!"=="2" (
+    echo.
+    echo   Skipping fp16 fix.
+    echo.
+    goto after_fp16fix
+)
+if not "!FIX_CHOICE!"=="1" goto prompt_fp16fix
+
+set "FIX_SRC=%SCRIPT_DIR%assets\sage_fp16_fix"
+set "FIX_DST=!COMFYUI_DIR!\ComfyUI\custom_nodes\sage_fp16_fix"
+if exist "!FIX_SRC!" (
+    echo   Installing fp16 fix to custom_nodes...
+    robocopy "!FIX_SRC!" "!FIX_DST!" /E /MT:8 >nul
+    if !ERRORLEVEL! LEQ 3 (
+        echo   Installed. Activates automatically when ComfyUI starts with sage.
+    ) else (
+        echo   Warning: copy error, level !ERRORLEVEL!.
+    )
+) else (
+    echo   WARNING: !FIX_SRC! not found, skipping.
+)
+echo.
+
+:after_fp16fix
+
 REM ── Step 5: Create run_nvidia_gpu_sage.bat ──
 echo Step 5: Create launcher
 

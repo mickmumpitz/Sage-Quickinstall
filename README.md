@@ -50,6 +50,7 @@ GTX 16xx / RTX 20xx (Turing) support was dropped in triton-windows 3.3+ (PyTorch
 - **c10.dll error** — Install the [Visual C++ Redistributable](https://aka.ms/vs/17/release/vc_redist.x64.exe)
 - **ComfyUI won't start** — Update your NVIDIA drivers to the latest version
 - **Wheel auto-detection fails** — The installer falls back to manual wheel selection
+- **All-black / dark video on RTX 50xx** — SageAttention's Blackwell (sm_120) fp8 kernel overflows fp16 on models like WAN (fp8 weights run fp16 math), producing NaNs → black frames. The installer offers an optional **fp16 black-frame fix** (drops a small node into `custom_nodes\sage_fp16_fix`) that routes fp16 attention through the stable bf16 Triton backend. It activates automatically; set `SAGE_FP16_FIX=0` to disable, or `SAGE_FP16_FIX_GUARD=1` for an extra fp32 fallback safety net.
 
 ## Third-Party Licenses
 
