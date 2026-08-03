@@ -323,6 +323,7 @@ echo.
 REM ── Optional: fp16 black-frame fix (Blackwell / WAN fp8) ──
 echo Optional: fp16 black-frame fix
 echo   Fixes all-black WAN renders with SageAttention on RTX 50xx (fp8 models).
+echo   Mainly needed when working with 2:1 resolutions (e.g. 1280x640).
 echo   [1] Yes (recommended)
 echo   [2] No
 echo.

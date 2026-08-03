@@ -9,6 +9,9 @@ larger than fp16 can represent (max 65504) as activation magnitudes grow during
 denoising -> inf -> NaN -> fully black frames. Plain PyTorch attention avoids this by
 accumulating in fp32.
 
+This is most commonly hit at 2:1 aspect-ratio resolutions (e.g. 1280x640, 960x480) --
+if you render black/dark video at those resolutions on a 50xx card, this fix is for you.
+
 WHAT IT DOES
 ------------
 Wraps the `sageattn` symbol that ComfyUI's `attention_sage` calls. For fp16 inputs it
