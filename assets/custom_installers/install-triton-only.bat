@@ -138,6 +138,10 @@ if "!TORCH_MINOR!"=="4" (
 ) else if "!TORCH_MINOR!"=="12" (
     set "TRITON_SPEC=triton-windows>=3.7,<3.8"
     set "TRITON_LABEL=3.7.x"
+) else if "!TORCH_MINOR!"=="13" (
+    REM No triton-windows 3.8 published yet; use latest 3.7.x until one exists
+    set "TRITON_SPEC=triton-windows>=3.7,<3.8"
+    set "TRITON_LABEL=3.7.x"
 )
 
 if not defined TRITON_SPEC (
