@@ -96,6 +96,10 @@ REM ── Step 3: Auto-select wheel ──
 :select_wheel
 echo Step 3: Selecting wheel...
 
+REM If a previous install attempt failed, don't re-auto-detect the same wheel;
+REM let the user pick manually instead of looping forever.
+if "!AUTODETECT_FAILED!"=="1" goto manual_select
+
 REM Determine CUDA major version (12 vs 13) - minor version doesn't matter for SageAttention
 set "CUDA_MAJOR="
 if not "!CUDA_VER!"=="not found" (
@@ -116,6 +120,13 @@ if not "!TORCH_VER!"=="not found" (
     )
 )
 
+REM Determine this Python's wheel tag (e.g. cp313) so we never pick a
+REM version-specific wheel built for a different Python (e.g. a cp311-only wheel).
+set "PY_TAG="
+if not "!PY_VER!"=="not found" (
+    for /f "tokens=1,2 delims=." %%A in ("!PY_VER!") do set "PY_TAG=cp%%A%%B"
+)
+
 REM Try to find matching wheel
 set "SELECTED_WHL="
 set "SELECTED_NAME="
@@ -134,6 +145,19 @@ if "!USE_ANDHIGHER!"=="1" (
     for %%F in ("%SCRIPT_DIR%assets\wheels\sageattention*+cu!CUDA_MAJOR!*torch!TORCH_MAJOR!.!TORCH_MINOR!.*-win_amd64.whl") do (
         set "SELECTED_WHL=%%F"
         set "SELECTED_NAME=%%~nxF"
+    )
+    REM Reject the exact-match wheel if it isn't compatible with this Python.
+    REM Version-specific wheels are built for a single Python (e.g. cp311); abi3
+    REM wheels work on any Python 3.9+. If incompatible, fall back to andhigher.
+    if defined SELECTED_WHL (
+        set "WHL_OK=0"
+        echo !SELECTED_NAME! | find /i "abi3" >nul && set "WHL_OK=1"
+        if defined PY_TAG echo !SELECTED_NAME! | find /i "-!PY_TAG!-" >nul && set "WHL_OK=1"
+        if "!WHL_OK!"=="0" (
+            echo   Skipping !SELECTED_NAME! ^(built for a different Python, not !PY_TAG!^).
+            set "SELECTED_WHL="
+            set "SELECTED_NAME="
+        )
     )
     REM Fall back to "andhigher" wheel if no exact match found
     if not defined SELECTED_WHL (
@@ -268,6 +292,10 @@ if "!TORCH_MINOR!"=="4" (
 ) else if "!TORCH_MINOR!"=="12" (
     set "TRITON_SPEC=triton-windows>=3.7,<3.8"
     set "TRITON_LABEL=3.7.x"
+) else if "!TORCH_MINOR!"=="13" (
+    REM No triton-windows 3.8 published yet; use latest 3.7.x until one exists
+    set "TRITON_SPEC=triton-windows>=3.7,<3.8"
+    set "TRITON_LABEL=3.7.x"
 )
 
 if not defined TRITON_SPEC (
@@ -313,6 +341,7 @@ if !ERRORLEVEL! NEQ 0 (
     echo.
     echo   Installation failed. Please select a different wheel.
     echo.
+    set "AUTODETECT_FAILED=1"
     goto select_wheel
 )
 
@@ -322,8 +351,9 @@ echo.
 
 REM ── Optional: fp16 black-frame fix (Blackwell / WAN fp8) ──
 echo Optional: fp16 black-frame fix
-echo   Fixes all-black WAN renders with SageAttention on RTX 50xx (fp8 models).
-echo   Mainly needed when working with 2:1 resolutions (e.g. 1280x640).
+echo   Recommended for the 3D Gaussian Splatting Dataset Creation Workflow
+echo   on RTX 50xx cards.
+echo   Prevents all-black frames during rendering.
 echo   [1] Yes (recommended)
 echo   [2] No
 echo.
